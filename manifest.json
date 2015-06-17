@@ -14,7 +14,18 @@
     "persistent": false
   },
 
-  "permissions": ["<all_urls>", "contextMenus", "nativeMessaging"],
+  "sockets":{
+    "tcp":{
+      "connect" : "127.0.0.1:40400"
+    }
+  },
+
+  "permissions": [
+    "<all_urls>",
+    "contextMenus",
+    "nativeMessaging",
+    "tabs"
+  ],
 
   "icons" : {
     "16" : "image/thumbnailIcon.png",
