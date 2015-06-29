@@ -2,7 +2,8 @@
  * Created by Kten on 2015-06-04.
  */
 
-var util = livedit.moduleDefine("livedit.util");
+var util = livedit.moduleDefine("livedit.util"),
+    client = livedit.moduleDefine("livedit.client");
 
 chrome.contextMenus.create({
     "title" : "Live Edit Start",
@@ -14,5 +15,5 @@ chrome.contextMenus.create({
 chrome.contextMenus.onClicked.addListener(onStartLiveEditHandler);
 
 function onStartLiveEditHandler(){
-    
+    client.conn.init();
 }
