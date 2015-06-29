@@ -5,8 +5,8 @@
   "description" : "Live Edit Plug-in with Eclipse by Kten",
   "version" : "0.0.1",
 
-  "browser_action" : {
-    "default_icon" : "image/thumbnailIcon.png"
+  "browser_action": {
+    "default_icon": "image/thumbnailIcon.png"
   },
 
   "background": {
@@ -14,17 +14,9 @@
     "persistent": false
   },
 
-  "sockets":{
-    "tcp":{
-      "connect" : "127.0.0.1:40400"
-    }
-  },
-
   "permissions": [
     "<all_urls>",
-    "contextMenus",
-    "nativeMessaging",
-    "tabs"
+    "contextMenus"
   ],
 
   "icons" : {

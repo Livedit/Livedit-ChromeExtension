@@ -2,6 +2,17 @@
  * Created by Kten on 2015-06-04.
  */
 
-var connect = livedit.moduleDefine("livedit.conn");
+var util = livedit.moduleDefine("livedit.util");
 
-connect.connection();
+chrome.contextMenus.create({
+    "title" : "Live Edit Start",
+    "contexts": ["all"],
+    "documentUrlPatterns": ["http://*/*", "https://*/*"],
+    "id" : "context_livedit"
+});
+
+chrome.contextMenus.onClicked.addListener(onStartLiveEditHandler);
+
+function onStartLiveEditHandler(){
+    
+}
