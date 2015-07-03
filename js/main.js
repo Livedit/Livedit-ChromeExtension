@@ -14,6 +14,25 @@ chrome.contextMenus.create({
 
 chrome.contextMenus.onClicked.addListener(onStartLiveEditHandler);
 
+document.getElementById("livedit-partition-button").onclick = onCallSavedPage;
+document.getElementById("livedit-save-button").onclick=onSaveCurrentPage;
+
 function onStartLiveEditHandler(){
-    client.conn.init();
+    //client.conn.init();
 }
+
+function onSaveCurrentPage(){
+    alert("This button is saved Current Page");
+}
+
+function onCallSavedPage(){
+    chrome.tabs.query({active : true}, function(tab) {
+        var tab = tab[0];
+
+        // Send a request to the content script.
+        chrome.tabs.sendMessage(tab.id, {action: "getDOM", text:tab.url}, function(response)
+        {
+            util.log(response.msg);
+        });
+    });
+};

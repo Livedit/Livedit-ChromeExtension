@@ -1,0 +1,6 @@
+/* Created by Kten on 2015-07-01 */
+
+.livedit-button { width: 100px; height : 30px; border: 2px solid #26822D; border-radius: 10px; background: #fff; cursor: pointer; }
+.livedit-button:hover{ background: #26822D; color: #fff;}
+.livedit-save-button{ width: 200px; margin-bottom: 10px; }
+.livedit-margin-last-button{margin-bottom: 0px;}

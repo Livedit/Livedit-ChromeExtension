@@ -3,15 +3,16 @@
  */
 
 var client = livedit.moduleDefine("livedit.client"),
+    save = livedit.moduleDefine("livedit.save"),
     util = livedit.moduleDefine("livedit.util");
 
 new function() {
     var ws = null,
         connected = null;
 
-    var host = "127.0.0.1",
-        port = "25533",
-        url = "ws://" + host + ":" + url + "livedit";
+    var host = "211.189.127.153",
+        port = "9003",
+        url = "ws://" + host + ":" + port;
 
     var open = function () {
         ws = new WebSocket(url);
@@ -43,7 +44,7 @@ new function() {
     };
 
     var onMessage = function(msg){
-        // Message 를 보내는 기능
+        // Message 를 받는 기능
     };
 
     var onError = function(event){
