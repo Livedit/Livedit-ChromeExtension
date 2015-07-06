@@ -16,6 +16,7 @@ chrome.contextMenus.onClicked.addListener(onStartLiveEditHandler);
 
 document.getElementById("livedit-partition-button").onclick = onCallSavedPage;
 document.getElementById("livedit-save-button").onclick=onSaveCurrentPage;
+document.getElementById("livedit-inspectDOM-button").onclick=onInspectDOM;
 
 function onStartLiveEditHandler(){
     //client.conn.init();
@@ -36,3 +37,15 @@ function onCallSavedPage(){
         });
     });
 };
+
+function onInspectDOM(){
+    chrome.tabs.query({active : true}, function(tab) {
+        var tab = tab[0];
+
+        // Send a request to the content script.
+        chrome.tabs.sendMessage(tab.id, {action: "inspectDOM", text:tab.url}, function(response)
+        {
+            util.log(response.msg);
+        });
+    });
+}

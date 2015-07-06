@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+<!-- <link href="/main.css" rel="stylesheet" /> -->
+<style>
+    .dh_hover {
+        opacity: 0.8;
+        border: 1px solid #0990C5;
+        position: relative;
+        top: -1px;
+        left: -1px;
+    }
+
+    #dialog {
+        display: none;
+        position: relative;
+        top: 5px;
+        left: 15px;
+        font-size: 16px;
+        font-weight: normal;
+        background: #DDD;
+        padding: 5px 10px;
+        width: 300px;
+        z-index: 3;
+        border: 3px solid #999;
+    }
+
+</style>
+<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+<script>
+    $(function(){
+
+        var last_element = null
+
+        $("body *").bind("click", function(){
+            var is_different_elem = $(this)[0] != $(last_element)[0]
+            if (last_element == null || is_different_elem || $(".dialogs").length == 0) {
+                $(".dialogs").remove()
+                $(this).append("<div id='dialog' class='dialogs'></div>")
+                var element = $(this).get(0).tagName.toLowerCase()
+
+                var id = $(this).attr("id")
+                if (id)
+                    id = "#"+id
+                else
+                    id = ""
+
+                var klass = $(this).attr("class") // TODO: multiple classes support
+                if (klass)
+                    klass = "."+klass.replace(/\s*dh_hover/, '')
+                else
+                    klass = ""
+
+                var infos = "element: "+element+id+klass
+                $("#dialog").html(infos).show()
+            } else {
+                $(".dialogs").remove()
+            }
+
+            last_element = this
+        })
+
+        $("body *").hover(function(){
+            $(this).addClass("dh_hover")
+            $(this).width($(this).width()-2).height($(this).height()-2)
+        }, function(){
+            $(".dialogs").remove()
+            $(this).removeClass("dh_hover")
+            $(this).width($(this).width()+2).height($(this).height()+2)
+        })
+    })
+</script>
+
+<h1>hi!</h1>
+<p class='test'>This is an example Page</p>
+<div id='content' class='test'>end!</div>
+</body>
+</html>
