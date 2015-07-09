@@ -1,75 +1,56 @@
 /**
  * Created by Kten on 2015-07-02.
  */
-var inspectLinkFlag = false;
+
+/* One Time Connection */
 
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
 {
+    var tab = request.tab;
+
     if (request.action && request.action == "getDOM") {
-        var url = request.text;
-        var saveUrl = "http://localhost:63342/LiveEdit/page/main.html";
+        var url = tab.tabUrl,
+        saveUrl = "http://localhost:63342/LiveEdit/page/main.html";
         document.body.innerHTML = "<iframe style='width:50%; height:100vh; border:0px;' src='" + saveUrl + "'></iframe>" +
                                 "<iframe style='width:50%; height:100vh; border:0px;' src='" + url +"'></iframe>";
         sendResponse({"msg": "Save Success."});
     } else if(request.action && request.action == "inspectDOM") {
         inspectDOM();
+        sendResponse({"msg": "Inspect Success."});
     }else
         sendResponse({"msg" : "Command is Fail."});
 });
 
 function inspectDOM(){
+    $("body *").click(function(){
+       console.log($(this).getPath());
+    });
+}
 
-    if(!inspectLinkFlag) {
-        var link = document.createElement("link");
-        link.id = "inspectLink";
-        link.href = chrome.extension.getURL("css/inspect.css");
-        link.type = "text/css";
-        link.rel = "stylesheet";
-        $("head").append(link);
+jQuery.fn.extend({
+    getPath: function () {
+        var path, node = this;
+        while (node.length) {
+            var realNode = node[0], name = realNode.localName;
+            if (!name) break;
+            name = name.toLowerCase();
 
-        inspectLinkFlag = true;
-    }
+            var parent = node.parent();
 
-    var last_element = null;
+            var sameTagSiblings = parent.children(name);
+            if (sameTagSiblings.length > 1) {
+                allSiblings = parent.children();
+                var index = allSiblings.index(realNode) + 1;
+                if (index > 1) {
+                    name += ':nth-child(' + index + ')';
+                }
+            }
 
-    // Inspect DOM Dialog Modifing
-    /*
-    $("body *").bind("click", function(){
-        var is_different_elem = $(this)[0] != $(last_element)[0];
-        if (last_element == null || is_different_elem || $(".dialogs").length == 0) {
-            $(".dialogs").remove();
-            $(this).append("<div id='dialog' class='dialogs'></div>");
-            var element = $(this).get(0).tagName.toLowerCase();
-
-            var id = $(this).attr("id");
-            if (id)
-                id = "#"+id;
-            else
-                id = "";
-
-            var klass = $(this).attr("class"); // TODO: multiple classes support
-            if (klass)
-                klass = "."+klass.replace(/\s*dh_hover/, '');
-            else
-                klass = "";
-
-            var infos = "element: "+element+id+klass;
-            $("#dialog").html(infos).show();
-        } else {
-            $(".dialogs").remove();
+            path = name + (path ? '>' + path : '');
+            node = parent;
         }
 
-        last_element = this;
-    });
-    */
+        return path;
+    }
+});
 
-    // duplicate hover problem 
-    $("body *").hover(function(){
-        $(this).addClass("dh_hover")
-        $(this).width($(this).width()).height($(this).height())
-    }, function(){
-        $(".dialogs").remove()
-        $(this).removeClass("dh_hover")
-        $(this).width($(this).width()).height($(this).height())
-    })
-}

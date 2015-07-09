@@ -4,6 +4,7 @@
 
 var client = livedit.moduleDefine("livedit.client"),
     save = livedit.moduleDefine("livedit.save"),
+    tool = livedit.moduleDefine("livedit.tool");
     util = livedit.moduleDefine("livedit.util");
 
 new function() {
@@ -44,7 +45,16 @@ new function() {
     };
 
     var onMessage = function(msg){
-        // Message 를 받는 기능
+        var replacedData = msg.data.replace(/'/g, '"');
+        var jsonStr = JSON.parse(replacedData);
+
+        util.log("RCV MSG : " + replacedData);
+
+        var nodeSelector = jsonStr.nodeSelector,
+            command = jsonStr.command;
+
+        if(command == "inspect")
+            tool.onInspectDOM(nodeSelector);
     };
 
     var onError = function(event){

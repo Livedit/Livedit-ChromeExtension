@@ -6,7 +6,7 @@
 .livedit-button { width: 100px; height : 30px; border: 2px solid #26822D; border-radius: 10px; background: #fff; cursor: pointer; }
 .livedit-button:hover{ background: #26822D; color: #fff;}
 
-.livedit-squer-icon{ margin-left: 6px; }
-.livedit-squer-icon:hover{ opacity: 0.3; cursor: pointer; }
+.livedit-square-icon{ margin-left: 6px; }
+.livedit-square-icon:hover{ opacity: 0.3; cursor: pointer; }
 
-.livedit-squer-img{ width: 30px; height: 30px;}
+.livedit-square-img{ width: 30px; height: 30px;}
