@@ -34,6 +34,14 @@ function onStartLiveEditHandler(){
 
     //Remove Div Attribute Test Code
     //tool.onRemoveAttribute({selector : "div", name : "id"});
+
+    //Modify Div Test Code
+
+    //Modify Element Text
+    tool.onModifyElement({selector : "div", value : "sojung", type : "text"})
+
+    //Modify Element Attribute
+    //tool.onModifyElement({selector : "div", name : "id", value : "sojung", type : "attribute"});
 }
 
 function onSaveCurrentPage(){

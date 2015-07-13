@@ -35,6 +35,7 @@ tool.onInspectDOM = function(nodeSelector){
                 util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + body.nodeId + ", 'selector' : " + nodeSelector +"}]");
                 var nodeId = response.nodeId;
 
+                // Send Command Highlight Node
                 chrome.debugger.sendCommand(debuggee, "DOM.highlightNode",{"nodeId" : nodeId, "highlightConfig" : tool.highlight}, function(response){
                     util.log("HIGHLIGHT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.highlightNode, {'nodeId' : " +nodeId + ", 'highlightConfig'' : tool.highlight}]");
                 });
@@ -68,6 +69,7 @@ tool.onRemoveAttribute = function(param){
                 util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + body.nodeId + ", 'selector' : " + nodeSelector + "}]");
                 var nodeId = response.nodeId;
 
+                // Send Command : Remove Attr
                 chrome.debugger.sendCommand(debuggee, "DOM.removeAttribute", {"nodeId": nodeId, "name" : attributeName}, function (response) {
                     util.log("REMOVE : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.removeAttribute, {'nodeId' : " + response.id + ", 'name' : "+ attributeName + "}]");
                 });
@@ -98,6 +100,7 @@ tool.onRemoveElement = function(nodeSelector){
                 util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + body.nodeId + ", 'selector' : " + nodeSelector + "}]");
                 var nodeId = response.nodeId;
 
+                // Send Command : Remove Element
                 chrome.debugger.sendCommand(debuggee, "DOM.removeNode", {"nodeId": nodeId}, function (response) {
                     util.log("REMOVE : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.removeNode, {'nodeId' : " + response.id + "}]");
                 });
@@ -110,8 +113,55 @@ tool.onInsertElement = function(){
 
 };
 
-tool.onUpdateElement = function(){
+tool.onModifyElement = function(param){
+    var nodeSelector = param.selector,
+        name = param.name,
+        value = param.value,
+        type = param.type;
 
+    console.log(param);
+
+
+    chrome.tabs.query({active : true}, function(tab) {
+        var tab = tab[0];
+
+        var debuggee = {tabId: tab.id};
+
+        chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tab.id));
+        util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tab.id + ")");
+
+        chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
+            util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
+
+            var responsedDOM = response;
+            var body = responsedDOM.root.children[1].children[1];
+
+            chrome.debugger.sendCommand(debuggee, "DOM.querySelector", {
+                "nodeId": body.nodeId,
+                "selector": nodeSelector
+            }, function (response) {
+                util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + body.nodeId + ", 'selector' : " + nodeSelector + "}]");
+                var nodeId = response.nodeId;
+
+                if(type && type == "attribute") {
+                    chrome.debugger.sendCommand(debuggee, "DOM.setAttributeValue", {
+                        "nodeId": nodeId,
+                        "name": name,
+                        "value": value
+                    }, function (response) {
+                        util.log("MODIFY ELEMENT ATTRIBUTE : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.setAttributeValue, {'nodeId' : " + response.id +", 'name' : " + name + ", 'value' : " + value + "}]");
+                    });
+                } else if (type && type == "text"){
+                    chrome.debugger.sendCommand(debuggee, "DOM.setNodeValue", {
+                        "nodeId": nodeId,
+                        "value": value
+                    }, function (response) {
+                        util.log("MODIFY ELEMENT TEXT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.setNodeValue, {'nodeId' : " + nodeId + ", 'value' : " + value + "}]");
+                    });
+                }
+            });
+        });
+    });
 };
 
 tool.onAttach = function(debuggee){
@@ -120,6 +170,7 @@ tool.onAttach = function(debuggee){
         return;
     }
 
+    // On Detach Callback Function
     chrome.debugger.onDetach.addListener(function(source, reason){
         util.log("DETACH : TAB[" + source.tabId + "] REASON[" + reason + "]");
     });
