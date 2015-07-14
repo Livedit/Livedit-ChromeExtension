@@ -109,18 +109,24 @@ tool.onRemoveElement = function(nodeSelector){
     });
 };
 
-tool.onInsertElement = function(){
+tool.onInsertHTMLElementRe = function(){
+    chrome.tabs.query({active : true}, function(tab) {
+        var tab = tab[0];
 
-};
+        var debuggee = {tabId: tab.id};
 
-tool.onModifyElement = function(param){
+        chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tab.id));
+        util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tab.id + ")");
+
+        chrome.debugger.sendCommand(debuggee, "Page.reload", {"ignoredCache" : true}, function (response) {
+            util.log("RELOAD : Func[chrome.debugger.attach],  Parameter[debuggee, 'Page.reload'])");
+        });
+    });
+}
+
+tool.onInsertHTMLElement = function(param){
     var nodeSelector = param.selector,
-        name = param.name,
-        value = param.value,
-        type = param.type;
-
-    console.log(param);
-
+        outerHTML = param.outerHTML;
 
     chrome.tabs.query({active : true}, function(tab) {
         var tab = tab[0];
@@ -143,22 +149,51 @@ tool.onModifyElement = function(param){
                 util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + body.nodeId + ", 'selector' : " + nodeSelector + "}]");
                 var nodeId = response.nodeId;
 
-                if(type && type == "attribute") {
-                    chrome.debugger.sendCommand(debuggee, "DOM.setAttributeValue", {
-                        "nodeId": nodeId,
-                        "name": name,
-                        "value": value
-                    }, function (response) {
-                        util.log("MODIFY ELEMENT ATTRIBUTE : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.setAttributeValue, {'nodeId' : " + response.id +", 'name' : " + name + ", 'value' : " + value + "}]");
-                    });
-                } else if (type && type == "text"){
-                    chrome.debugger.sendCommand(debuggee, "DOM.setNodeValue", {
-                        "nodeId": nodeId,
-                        "value": value
-                    }, function (response) {
-                        util.log("MODIFY ELEMENT TEXT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.setNodeValue, {'nodeId' : " + nodeId + ", 'value' : " + value + "}]");
-                    });
-                }
+                chrome.debugger.sendCommand(debuggee, "DOM.setOuterHTML", {
+                    "nodeId": nodeId,
+                    "outerHTML": outerHTML
+                }, function(response){
+                    console.log(response);
+                });
+            });
+        });
+    });
+};
+
+tool.onModifyElement = function(param){
+    var nodeSelector = param.selector,
+        name = param.name,
+        value = param.value,
+        type = param.type;
+
+    chrome.tabs.query({active : true}, function(tab) {
+        var tab = tab[0];
+
+        var debuggee = {tabId: tab.id};
+
+        chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tab.id));
+        util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tab.id + ")");
+
+        chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
+            util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
+
+            var responsedDOM = response;
+            var body = responsedDOM.root.children[1].children[1];
+
+            chrome.debugger.sendCommand(debuggee, "DOM.querySelector", {
+                "nodeId": body.nodeId,
+                "selector": nodeSelector
+            }, function (response) {
+                util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + body.nodeId + ", 'selector' : " + nodeSelector + "}]");
+                var nodeId = response.nodeId;
+
+                chrome.debugger.sendCommand(debuggee, "DOM.setAttributeValue", {
+                    "nodeId": nodeId,
+                    "name": name,
+                    "value": value
+                }, function (response) {
+                    util.log("MODIFY ELEMENT ATTRIBUTE : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.setAttributeValue, {'nodeId' : " + nodeId + ", 'name' : " + name + ", 'value' : " + value + "}]");
+                });
             });
         });
     });

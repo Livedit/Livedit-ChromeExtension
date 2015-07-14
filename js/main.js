@@ -29,6 +29,12 @@ function onStartLiveEditHandler(){
     //inspect Div Test Code
     //tool.onInspectDOM("div");
 
+    //insert HTML Element - case : reload
+    //tool.onInsertHTMLElementRe();
+
+    //insert HTML Element Div Test Code
+    //tool.onInsertHTMLElement({selector : "html>body>div:last-child", outerHTML : "<div id=\"test\">Hello</div>"});
+
     //Remove Div Test Code
     //tool.onRemoveElement("div");
 
@@ -37,11 +43,8 @@ function onStartLiveEditHandler(){
 
     //Modify Div Test Code
 
-    //Modify Element Text
-    tool.onModifyElement({selector : "div", value : "sojung", type : "text"})
-
     //Modify Element Attribute
-    //tool.onModifyElement({selector : "div", name : "id", value : "sojung", type : "attribute"});
+    //tool.onModifyElement({selector : "div", name : "id", value : "sojung"});
 }
 
 function onSaveCurrentPage(){

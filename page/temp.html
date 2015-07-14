@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html>
 <body>
+<script>
+    window.onload = function() {
+        function test() {
+            alert("!");
+        }
+
+        document.getElementById("test").onclick = test;
+    };
+</script>
 <h1>hi!</h1>
 <p class='test'>This is an example Page</p>
-<div id='content' class='test' style="width: 200px; border: 1px solid black;"><p>end!</p></div>
+<div id='content' class='test' style="width: 200px; border: 1px solid black;"><p>end!</p><p>test</p></div>
 <div>hihi</div>
+<div>hi</div><div id='test'>hello</div>
 <div>hi</div>
-</body>
-</html>
+<div>hi</div>
+<div>hi</div>

@@ -9,11 +9,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
     var tab = request.tab;
 
     if (request.action && request.action == "getDOM") {
-        var url = tab.tabUrl,
+        /*var url = tab.tabUrl,
         saveUrl = "http://localhost:63342/LiveEdit/page/main.html";
         document.body.innerHTML = "<iframe style='width:50%; height:100vh; border:0px;' src='" + saveUrl + "'></iframe>" +
-                                "<iframe style='width:50%; height:100vh; border:0px;' src='" + url +"'></iframe>";
-        sendResponse({"msg": "Save Success."});
+                                "<iframe style='width:50%; height:100vh; border:0px;' src='" + url +"'></iframe>";*/
+        inspectDOM();
+        sendResponse({"msg": "Save Success. "});
     } else if(request.action && request.action == "inspectDOM") {
         inspectDOM();
         sendResponse({"msg": "Inspect Success."});
@@ -23,8 +24,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
 
 function inspectDOM(){
     $("body *").click(function(){
-       console.log($(this).getPath());
     });
+    console.log($("p").getPath());
 }
 
 jQuery.fn.extend({
