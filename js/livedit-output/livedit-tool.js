@@ -199,6 +199,35 @@ tool.onModifyElement = function(param){
     });
 };
 
+tool.onInjectExternalJavascript = function(){
+
+    chrome.tabs.query({active : true}, function(tab) {
+        var tab = tab[0];
+
+        var debuggee = {tabId: tab.id};
+
+        chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tab.id));
+        util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tab.id + ")");
+
+        chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
+            util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
+
+            console.log(response);
+            var responsedDOM = response;
+            var head = responsedDOM.root.children[1].children[0];
+
+            var outerHTML = "<script lang='javascript' src='../js/temp.js'></script>"
+
+            chrome.debugger.sendCommand(debuggee, "DOM.setOuterHTML", {
+                "nodeId": head.nodeId,
+                "outerHTML": outerHTML
+            }, function(response){
+                console.log(response);
+            });
+        });
+    });
+};
+
 tool.onAttach = function(debuggee){
     if (chrome.runtime.lastError) {
         util.error(chrome.runtime.lastError.message);

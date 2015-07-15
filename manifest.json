@@ -31,10 +31,6 @@
     "debugger"
   ],
 
-  "web_accessible_resources": [
-    "css/inspect.css"
-  ],
-
   "icons" : {
     "16" : "image/thumbnailIcon.png",
     "128" : "image/thumbnailIcon.png"
