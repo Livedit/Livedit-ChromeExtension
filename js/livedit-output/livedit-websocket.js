@@ -11,8 +11,8 @@ new function() {
     var ws = null,
         connected = null;
 
-    var host = "211.189.127.153",
-        port = "9003",
+    var host = "211.189.127.59",
+        port = "8080",
         url = "ws://" + host + ":" + port;
 
     var open = function () {
@@ -45,16 +45,23 @@ new function() {
     };
 
     var onMessage = function(msg){
-        var replacedData = msg.data.replace(/'/g, '"');
+        console.log(msg);
+        var replacedData = msg.data.replace(/'/g, '\\"');
+        console.log(replacedData);
+
         var jsonStr = JSON.parse(replacedData);
 
         util.log("RCV MSG : " + replacedData);
 
         var nodeSelector = jsonStr.nodeSelector,
-            command = jsonStr.command;
+            command = jsonStr.command,
+            code = jsonStr.code;
 
         if(command == "inspect")
             tool.onInspectDOM(nodeSelector);
+        else if(command == "insert")
+            tool.onInsertHTMLElement({selector : nodeSelector, outerHTML : code});
+
     };
 
     var onError = function(event){

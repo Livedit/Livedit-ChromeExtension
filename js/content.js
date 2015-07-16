@@ -25,11 +25,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
 function inspectDOM(){
     $("body *").click(function(){
     });
-    console.log($("p").getPath());
+    console.log($("p#park").getPath());
 }
 
 jQuery.fn.extend({
     getPath: function () {
+        //console.log(this);
         var path, node = this;
         while (node.length) {
             var realNode = node[0], name = realNode.localName;
@@ -37,15 +38,23 @@ jQuery.fn.extend({
             name = name.toLowerCase();
 
             var parent = node.parent();
+            console.log(parent);
 
             var sameTagSiblings = parent.children(name);
             if (sameTagSiblings.length > 1) {
                 allSiblings = parent.children();
+
+                console.log("allSiblings : ");
+                console.log(allSiblings);
+
+                console.log(realNode);
                 var index = allSiblings.index(realNode) + 1;
                 if (index > 1) {
                     name += ':nth-child(' + index + ')';
                 }
             }
+
+            console.log("output : " + name);
 
             path = name + (path ? '>' + path : '');
             node = parent;

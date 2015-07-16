@@ -24,7 +24,7 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 function onStartLiveEditHandler(){
-    //client.conn.init();
+    client.conn.init();
 
     //inspect Div Test Code
     //tool.onInspectDOM("div");
@@ -33,7 +33,7 @@ function onStartLiveEditHandler(){
     //tool.onInsertHTMLElementRe();
 
     //insert HTML Element Div Test Code
-    //tool.onInsertHTMLElement({selector : "html>body>div:last-child", outerHTML : "<div id=\"test\">Hello</div>"});
+    //tool.onInsertHTMLElement({selector : "html", outerHTML : html});
 
     //Remove Div Test Code
     //tool.onRemoveElement("div");
@@ -47,7 +47,7 @@ function onStartLiveEditHandler(){
     //tool.onModifyElement({selector : "div", name : "id", value : "sojung"});
 
     //Inject Javascript Test Code
-    tool.onInjectExternalJavascript();
+   // tool.onInjectExternalJavascript();
 }
 
 function onSaveCurrentPage(){

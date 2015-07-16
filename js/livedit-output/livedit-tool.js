@@ -140,6 +140,7 @@ tool.onInsertHTMLElement = function(param){
             util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
             var responsedDOM = response;
+            console.log(responsedDOM);
             var body = responsedDOM.root.children[1].children[1];
 
             chrome.debugger.sendCommand(debuggee, "DOM.querySelector", {
