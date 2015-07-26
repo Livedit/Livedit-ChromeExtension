@@ -61,6 +61,8 @@ new function() {
             tool.onInspectDOM(nodeSelector);
         else if(command == "insert")
             tool.onInsertHTMLElement({selector : nodeSelector, outerHTML : code});
+        else if(command == "injectJavascript")
+            tool.onInjectExternalJavascript({selector : nodeSelector, outerHTML : code});
 
     };
 

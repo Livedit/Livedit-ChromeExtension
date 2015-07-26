@@ -47,7 +47,7 @@ function onStartLiveEditHandler(){
     //tool.onModifyElement({selector : "div", name : "id", value : "sojung"});
 
     //Inject Javascript Test Code
-   // tool.onInjectExternalJavascript();
+    //tool.onInjectExternalJavascript();
 }
 
 function onSaveCurrentPage(){

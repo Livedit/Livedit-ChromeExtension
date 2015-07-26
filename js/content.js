@@ -44,10 +44,6 @@ jQuery.fn.extend({
             if (sameTagSiblings.length > 1) {
                 allSiblings = parent.children();
 
-                console.log("allSiblings : ");
-                console.log(allSiblings);
-
-                console.log(realNode);
                 var index = allSiblings.index(realNode) + 1;
                 if (index > 1) {
                     name += ':nth-child(' + index + ')';

@@ -3,6 +3,20 @@
  */
 var tool = livedit.moduleDefine("livedit.tool");
 
+tool.init = function(){
+    chrome.debugger.onEvent.addListener(function(source, method, param){
+        if(method == "Debugger.scriptParsed" && param.url.startsWith("http://")){
+            util.log("SCRIPT PARSED(ID) : " + param.scriptId);
+            util.log("SCRIPT PARSED(URL) : " + param.url );
+        }
+    });
+
+    // On Detach Callback Function
+    chrome.debugger.onDetach.addListener(function(source, reason){
+        util.log("DETACH : TAB[" + source.tabId + "] REASON[" + reason + "]");
+    });
+}
+
 tool.onInspectDOM = function(nodeSelector){
 
     chrome.tabs.query({active : true}, function(tab) {
@@ -48,7 +62,7 @@ tool.onRemoveAttribute = function(param){
     var attributeName = param.name,
         nodeSelector = param.selector;
 
-    chrome.tabs.query({active : true}, function(tab) {
+    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -79,7 +93,7 @@ tool.onRemoveAttribute = function(param){
 };
 
 tool.onRemoveElement = function(nodeSelector){
-    chrome.tabs.query({active : true}, function(tab) {
+    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -110,7 +124,7 @@ tool.onRemoveElement = function(nodeSelector){
 };
 
 tool.onInsertHTMLElementRe = function(){
-    chrome.tabs.query({active : true}, function(tab) {
+    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -128,7 +142,7 @@ tool.onInsertHTMLElement = function(param){
     var nodeSelector = param.selector,
         outerHTML = param.outerHTML;
 
-    chrome.tabs.query({active : true}, function(tab) {
+    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -155,6 +169,8 @@ tool.onInsertHTMLElement = function(param){
                     "outerHTML": outerHTML
                 }, function(response){
                     console.log(response);
+
+                    //tool.onInjectExternalJavascript();
                 });
             });
         });
@@ -167,7 +183,7 @@ tool.onModifyElement = function(param){
         value = param.value,
         type = param.type;
 
-    chrome.tabs.query({active : true}, function(tab) {
+    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -200,9 +216,11 @@ tool.onModifyElement = function(param){
     });
 };
 
-tool.onInjectExternalJavascript = function(){
+tool.onInjectExternalJavascript = function(param){
+    var nodeSelector = param.selector,
+        outerHTML = param.outerHTML;
 
-    chrome.tabs.query({active : true}, function(tab) {
+    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -210,6 +228,47 @@ tool.onInjectExternalJavascript = function(){
         chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tab.id));
         util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tab.id + ")");
 
+
+        chrome.debugger.sendCommand(debuggee, "Debugger.enable", function(msg){
+
+        });
+
+        chrome.debugger.sendCommand(debuggee, "Debugger.compileScript", {expression: outerHTML, sourceURL: tab.url, persistScript:true}, function(msg){
+            chrome.debugger.sendCommand(debuggee, "Debugger.runScript", {scriptId: msg.scriptId}, function(msg){
+                console.log(msg);
+            });
+        });
+
+        chrome.debugger.sendCommand(debuggee, "Debugger.disalbe", function(msg){
+
+        });
+
+        chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
+            util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
+
+            var responsedDOM = response;
+            console.log(responsedDOM);
+            var head = responsedDOM.root.children[1].children[0];
+
+            chrome.debugger.sendCommand(debuggee, "DOM.querySelector", {
+                "nodeId": head.nodeId,
+                "selector": nodeSelector
+            }, function (response) {
+                util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + head.nodeId + ", 'selector' : " + nodeSelector + "}]");
+                var nodeId = response.nodeId;
+
+                chrome.debugger.sendCommand(debuggee, "DOM.setOuterHTML", {
+                    "nodeId": nodeId,
+                    "outerHTML": outerHTML
+                }, function(response){
+                    console.log(response);
+
+                    //tool.onInjectExternalJavascript();
+                });
+            });
+        });
+
+        /*
         chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
             util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
@@ -225,7 +284,7 @@ tool.onInjectExternalJavascript = function(){
             }, function(response){
                 console.log(response);
             });
-        });
+        });*/
     });
 };
 
@@ -234,9 +293,6 @@ tool.onAttach = function(debuggee){
         util.error(chrome.runtime.lastError.message);
         return;
     }
-
-    // On Detach Callback Function
-    chrome.debugger.onDetach.addListener(function(source, reason){
-        util.log("DETACH : TAB[" + source.tabId + "] REASON[" + reason + "]");
-    });
 }
+
+tool.init();
