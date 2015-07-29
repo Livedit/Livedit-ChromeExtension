@@ -1,3 +1,1 @@
-document.getElementById("content").onclick = function(){
-    alert("!!!!");
-}
+$(document).ready(function () {  $("#test").click(function () {  alert("aaaaaaaaabbbbbbbbb")    });});

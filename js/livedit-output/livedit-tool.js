@@ -1,13 +1,32 @@
 /**
  * Created by Kten on 2015-07-10.
  */
-var tool = livedit.moduleDefine("livedit.tool");
+var tool = livedit.moduleDefine("livedit.tool"),
+    javascriptObjectList = [];
 
 tool.init = function(){
     chrome.debugger.onEvent.addListener(function(source, method, param){
+        //console.log(source);
+        //console.log(method);
+        //console.log(param);
         if(method == "Debugger.scriptParsed" && param.url.startsWith("http://")){
             util.log("SCRIPT PARSED(ID) : " + param.scriptId);
             util.log("SCRIPT PARSED(URL) : " + param.url );
+            util.log("SCRIPT PARSED(URL SIZE) : " + javascriptObjectList.length );
+
+            if(javascriptObjectList.length == 0)
+                javascriptObjectList.push({id : param.scriptId, url : util.substringFileName(param.url), realUrl : param.url});
+            else{
+                var i = 0;
+                for(; i < javascriptObjectList.length ; i ++){
+                    if(javascriptObjectList[i].url == util.substringFileName(param.url))
+                        break;
+                }
+
+                if(i == javascriptObjectList.length){
+                    javascriptObjectList.push({id : param.scriptId, url : util.substringFileName(param.url), realUrl : param.url});
+                }
+            }
         }
     });
 
@@ -16,6 +35,8 @@ tool.init = function(){
         util.log("DETACH : TAB[" + source.tabId + "] REASON[" + reason + "]");
     });
 }
+
+tool.init();
 
 tool.onInspectDOM = function(nodeSelector){
 
@@ -48,6 +69,9 @@ tool.onInspectDOM = function(nodeSelector){
             chrome.debugger.sendCommand(debuggee, "DOM.querySelector",{"nodeId" : body.nodeId, "selector" : nodeSelector}, function(response){
                 util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + body.nodeId + ", 'selector' : " + nodeSelector +"}]");
                 var nodeId = response.nodeId;
+
+                if(nodeSelector == "html > body")
+                    nodeId = body.nodeId;
 
                 // Send Command Highlight Node
                 chrome.debugger.sendCommand(debuggee, "DOM.highlightNode",{"nodeId" : nodeId, "highlightConfig" : tool.highlight}, function(response){
@@ -217,8 +241,11 @@ tool.onModifyElement = function(param){
 };
 
 tool.onInjectExternalJavascript = function(param){
-    var nodeSelector = param.selector,
-        outerHTML = param.outerHTML;
+    var scriptUrl = param.scriptUrl,
+        scriptSource = param.scriptSource,
+        linkFlag = param.linkFlag,
+        mainFlag = false,
+        firstFlag = false;
 
     chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
@@ -230,19 +257,72 @@ tool.onInjectExternalJavascript = function(param){
 
 
         chrome.debugger.sendCommand(debuggee, "Debugger.enable", function(msg){
+            util.log("DEBUG ENABLED...");
 
+            var thisScriptId, thisScriptUrl;
+
+            if(scriptUrl == ""){
+                scriptUrl = util.substringFileName(tab.url);
+                mainFlag = true;
+            }
+
+            for(var i = 0 ; i < javascriptObjectList.length ; i ++ ){
+                //console.log("ScriptId : " + javascriptObjectList[i].id);
+                //console.log("ScriptUrl : " + javascriptObjectList[i].url);
+                //console.log("Getted Script : " + scriptUrl);
+                if(javascriptObjectList[i].url == util.substringFileName(scriptUrl)){
+                    thisScriptId = javascriptObjectList[i].id;
+                    thisScriptUrl = javascriptObjectList[i].realUrl;
+                    break;
+                }
+
+                if(i == javascriptObjectList.length - 1 && linkFlag){
+                    firstFlag = true;
+                    if(!mainFlag)
+                        thisScriptUrl = util.rootName(tab.url) + "/" + scriptUrl;
+                    else
+                        thisScriptUrl = tab.url;
+                }
+            }
+
+            if(linkFlag || firstFlag){
+                chrome.debugger.sendCommand(debuggee, "Debugger.compileScript", {expression: scriptSource, sourceURL: thisScriptUrl, persistScript:true}, function(msg){
+                    chrome.debugger.sendCommand(debuggee, "Debugger.runScript", {scriptId: msg.scriptId}, function(runMsg){
+                        chrome.debugger.sendCommand(debuggee, "Debugger.setScriptSource", {
+                            scriptId: msg.scriptId,
+                            scriptSource: scriptSource,
+                            preview: false
+                        }, function (response) {
+                        });
+                    });
+                });
+            } else {
+                chrome.debugger.sendCommand(debuggee, "Debugger.setScriptSource", {
+                    scriptId: thisScriptId,
+                    scriptSource: scriptSource
+                }, function (response) {
+                    chrome.debugger.sendCommand(debuggee, "Runtime.evaluate", {expression: scriptSource}, function (msg) {
+                        util.log("EV : " + thisScriptId + " " + scriptSource + " ");
+                        //tool.onInjectExternalJavascript({scriptUrl : "js/temp.js", scriptSource : "$(document).ready(function () { alert('!');    $('#test).click(function () {        alert('aaaaaaaaabbbbbbbbb')    });$('#ttest').click(function () {    alert('aaaaaaaaabbbbbbbbb');});});", linkFlag : false});
+
+                    });
+                });
+            }
         });
 
-        chrome.debugger.sendCommand(debuggee, "Debugger.compileScript", {expression: outerHTML, sourceURL: tab.url, persistScript:true}, function(msg){
+
+
+        /*
+        chrome.debugger.sendCommand(debuggee, "Debugger.compileScript", {expression: scriptSource, sourceURL: scriptUrl, persistScript:true}, function(msg){
+            console.log(msg);
             chrome.debugger.sendCommand(debuggee, "Debugger.runScript", {scriptId: msg.scriptId}, function(msg){
-                console.log(msg);
+                chrome.debugger.sendCommand(debuggee, "Debugger.disable");
             });
         });
+        */
 
-        chrome.debugger.sendCommand(debuggee, "Debugger.disalbe", function(msg){
 
-        });
-
+        /*
         chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
             util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
@@ -266,7 +346,9 @@ tool.onInjectExternalJavascript = function(param){
                     //tool.onInjectExternalJavascript();
                 });
             });
+
         });
+        */
 
         /*
         chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
@@ -294,5 +376,3 @@ tool.onAttach = function(debuggee){
         return;
     }
 }
-
-tool.init();

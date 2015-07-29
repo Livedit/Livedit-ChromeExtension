@@ -6,9 +6,9 @@ var util = livedit.moduleDefine("livedit.util"),
     client = livedit.moduleDefine("livedit.client"),
     tool = livedit.moduleDefine("livedit.tool");
 
-document.getElementById("livedit-partition-button").onclick = onCallSavedPage;
-document.getElementById("livedit-save-button").onclick = onSaveCurrentPage;
-document.getElementById("livedit-inspectDOM-button").onclick = onStartLiveEditHandler;
+//document.getElementById("livedit-partition-button").onclick = onCallSavedPage;
+//document.getElementById("livedit-save-button").onclick = onSaveCurrentPage;
+//document.getElementById("livedit-inspectDOM-button").onclick = onStartLiveEditHandler;
 
 chrome.runtime.onInstalled.addListener(function() {
     var contexts = ["all"],
@@ -24,7 +24,7 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 function onStartLiveEditHandler(){
-    client.conn.init();
+    //client.conn.init();
 
     //inspect Div Test Code
     //tool.onInspectDOM("div");
@@ -47,7 +47,8 @@ function onStartLiveEditHandler(){
     //tool.onModifyElement({selector : "div", name : "id", value : "sojung"});
 
     //Inject Javascript Test Code
-    //tool.onInjectExternalJavascript();
+    //tool.onInjectExternalJavascript({scriptUrl : "http://localhost:63342/LiveEdit/temp.html", scriptSource : "$(document).ready(function () {    $('#test').click(function () {        alert('aaaaaaaaabbbbbbbbb')    });$('#ttest').click(function () {    alert('aaaaaaaaabbbbbbbbb');});});", linkFlag : false});
+    tool.onInjectExternalJavascript({scriptUrl : "js/temp.js", scriptSource : "document.getElementById('test').onclick = function(){ alert('aaaaa'); }", linkFlag : false});
 }
 
 function onSaveCurrentPage(){
