@@ -16,7 +16,6 @@ chrome.runtime.onInstalled.addListener(function() {
     chrome.contextMenus.create({
         title: title,
         contexts: contexts,
-        documentUrlPatterns: ["http://*/*", "https://*/*"],
         id: "StartLivedit"
     });
 
