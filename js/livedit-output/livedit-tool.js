@@ -65,6 +65,8 @@ tool.onInspectDOM = function(nodeSelector){
         chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, debuggee));
         util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tabId + ")");
 
+        chrome.debugger.sendCommand(debuggee, "DOM.hideHighlight");
+
         chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
             util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
@@ -105,6 +107,8 @@ tool.onRemoveAttribute = function(param){
         chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tabId));
         util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tabId + ")");
 
+        chrome.debugger.sendCommand(debuggee, "DOM.hideHighlight");
+
         chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
             util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
@@ -140,6 +144,8 @@ tool.onRemoveElement = function(nodeSelector){
 
         chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tabId));
         util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tabId + ")");
+
+        chrome.debugger.sendCommand(debuggee, "DOM.hideHighlight");
 
         chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
             util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
@@ -186,6 +192,8 @@ tool.onInsertHTMLElement = function(param){
         chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tabId));
         util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tabId + ")");
 
+        chrome.debugger.sendCommand(debuggee, "DOM.hideHighlight");
+
         chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
             util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
@@ -227,6 +235,8 @@ tool.onModifyElement = function(param){
 
         chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tabId));
         util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tabId + ")");
+
+        chrome.debugger.sendCommand(debuggee, "DOM.hideHighlight");
 
         chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
             util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
