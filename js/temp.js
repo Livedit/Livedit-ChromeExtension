@@ -1,1 +1,1 @@
-$(document).ready(function () {  $("#test").click(function () {  alert("aaaaaaaaabbbbbbbbb")    });});
+window.onload = function(){document.getElementById('test').onclick = function(){ alert('aaaaaaaaaaaaaaaabbbbbbbbbb'); }}

@@ -24,7 +24,7 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 function onStartLiveEditHandler(){
-    //client.conn.init();
+    client.conn.init();
 
     //inspect Div Test Code
     //tool.onInspectDOM("div");
@@ -47,8 +47,7 @@ function onStartLiveEditHandler(){
     //tool.onModifyElement({selector : "div", name : "id", value : "sojung"});
 
     //Inject Javascript Test Code
-    //tool.onInjectExternalJavascript({scriptUrl : "http://localhost:63342/LiveEdit/temp.html", scriptSource : "$(document).ready(function () {    $('#test').click(function () {        alert('aaaaaaaaabbbbbbbbb')    });$('#ttest').click(function () {    alert('aaaaaaaaabbbbbbbbb');});});", linkFlag : false});
-    tool.onInjectExternalJavascript({scriptUrl : "js/temp.js", scriptSource : "document.getElementById('test').onclick = function(){ alert('aaaaa'); }", linkFlag : false});
+    //tool.onInjectExternalJavascript({scriptUrl : "js/temp.js", scriptSource : "document.getElementById('test').onclick = function(){ alert('aaaaa'); }"});
 }
 
 function onSaveCurrentPage(){

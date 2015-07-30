@@ -240,12 +240,13 @@ tool.onModifyElement = function(param){
     });
 };
 
-tool.onInjectExternalJavascript = function(param){
+tool.onInjectExternalJavascript = function(){
+    /*
     var scriptUrl = param.scriptUrl,
         scriptSource = param.scriptSource,
-        linkFlag = param.linkFlag,
         mainFlag = false,
-        firstFlag = false;
+        linkFlag = true,
+        firstFlag = false;*/
 
     chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
@@ -255,7 +256,9 @@ tool.onInjectExternalJavascript = function(param){
         chrome.debugger.attach(debuggee, "1.0", tool.onAttach.bind(null, tab.id));
         util.log("ATTACH : Func[chrome.debugger.attach],  Parameter[debuggee," + " 1.0, tool.onAttach.bind(null, " + tab.id + ")");
 
+        chrome.debugger.sendCommand(debuggee, "Page.reload");
 
+        /*
         chrome.debugger.sendCommand(debuggee, "Debugger.enable", function(msg){
             util.log("DEBUG ENABLED...");
 
@@ -264,6 +267,7 @@ tool.onInjectExternalJavascript = function(param){
             if(scriptUrl == ""){
                 scriptUrl = util.substringFileName(tab.url);
                 mainFlag = true;
+                linkFlag = true;
             }
 
             for(var i = 0 ; i < javascriptObjectList.length ; i ++ ){
@@ -273,6 +277,7 @@ tool.onInjectExternalJavascript = function(param){
                 if(javascriptObjectList[i].url == util.substringFileName(scriptUrl)){
                     thisScriptId = javascriptObjectList[i].id;
                     thisScriptUrl = javascriptObjectList[i].realUrl;
+                    linkFlag = false;
                     break;
                 }
 
@@ -293,6 +298,7 @@ tool.onInjectExternalJavascript = function(param){
                             scriptSource: scriptSource,
                             preview: false
                         }, function (response) {
+                            util.log("RS : " + msg.scriptId + " " + scriptSource);
                         });
                     });
                 });
@@ -301,71 +307,14 @@ tool.onInjectExternalJavascript = function(param){
                     scriptId: thisScriptId,
                     scriptSource: scriptSource
                 }, function (response) {
+                    console.log(response);
                     chrome.debugger.sendCommand(debuggee, "Runtime.evaluate", {expression: scriptSource}, function (msg) {
                         util.log("EV : " + thisScriptId + " " + scriptSource + " ");
+                        console.log(msg);
                         //tool.onInjectExternalJavascript({scriptUrl : "js/temp.js", scriptSource : "$(document).ready(function () { alert('!');    $('#test).click(function () {        alert('aaaaaaaaabbbbbbbbb')    });$('#ttest').click(function () {    alert('aaaaaaaaabbbbbbbbb');});});", linkFlag : false});
-
                     });
                 });
             }
-        });
-
-
-
-        /*
-        chrome.debugger.sendCommand(debuggee, "Debugger.compileScript", {expression: scriptSource, sourceURL: scriptUrl, persistScript:true}, function(msg){
-            console.log(msg);
-            chrome.debugger.sendCommand(debuggee, "Debugger.runScript", {scriptId: msg.scriptId}, function(msg){
-                chrome.debugger.sendCommand(debuggee, "Debugger.disable");
-            });
-        });
-        */
-
-
-        /*
-        chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
-            util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
-
-            var responsedDOM = response;
-            console.log(responsedDOM);
-            var head = responsedDOM.root.children[1].children[0];
-
-            chrome.debugger.sendCommand(debuggee, "DOM.querySelector", {
-                "nodeId": head.nodeId,
-                "selector": nodeSelector
-            }, function (response) {
-                util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + head.nodeId + ", 'selector' : " + nodeSelector + "}]");
-                var nodeId = response.nodeId;
-
-                chrome.debugger.sendCommand(debuggee, "DOM.setOuterHTML", {
-                    "nodeId": nodeId,
-                    "outerHTML": outerHTML
-                }, function(response){
-                    console.log(response);
-
-                    //tool.onInjectExternalJavascript();
-                });
-            });
-
-        });
-        */
-
-        /*
-        chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function (response) {
-            util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
-
-            console.log(response);
-            var responsedDOM = response;
-            var head = responsedDOM.root.children[1].children[0];
-
-            var outerHTML = "<script lang='javascript' src='../js/temp.js'></script>"
-
-            chrome.debugger.sendCommand(debuggee, "DOM.setOuterHTML", {
-                "nodeId": head.nodeId,
-                "outerHTML": outerHTML
-            }, function(response){
-                console.log(response);
-            });
         });*/
     });
 };

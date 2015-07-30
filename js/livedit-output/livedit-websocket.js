@@ -12,7 +12,7 @@ new function() {
         connected = null;
 
     var host = "211.189.127.59",
-        port = "8080",
+        port = "63312",
         url = "ws://" + host + ":" + port;
 
     var open = function () {
@@ -55,6 +55,7 @@ new function() {
 
         var nodeSelector = jsonStr.nodeSelector,
             command = jsonStr.command,
+
             code = jsonStr.code;
 
         if(command == "inspect")
@@ -62,7 +63,7 @@ new function() {
         else if(command == "insert")
             tool.onInsertHTMLElement({selector : nodeSelector, outerHTML : code});
         else if(command == "injectJavascript")
-            tool.onInjectExternalJavascript({selector : nodeSelector, outerHTML : code});
+            tool.onInjectExternalJavascript();
 
     };
 
