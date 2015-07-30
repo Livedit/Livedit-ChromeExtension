@@ -44,3 +44,17 @@ util.substringFileName = function(url){
     //console.log(url.substring(index + 1, url.length));
     return url.substring(index + 1, url.length);
 }
+
+util.getBodyDOM = function(responsedDOM){
+    for(var i = 0 ; i < responsedDOM.root.childNodeCount; i ++ ){
+        var firstRootChildren = responsedDOM.root.children[i];
+        for(var j = 0 ; j < firstRootChildren.childNodeCount; j ++){
+            var secondChildren = firstRootChildren.children[j];
+            if(secondChildren.localName == "body"){
+                return secondChildren;
+            }
+        }
+    }
+
+    return "";
+}

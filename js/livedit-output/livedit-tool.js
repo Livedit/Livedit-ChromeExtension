@@ -65,8 +65,9 @@ tool.onInspectDOM = function(nodeSelector){
     chrome.debugger.sendCommand(debuggee, "DOM.getDocument", function(response){
         util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
+
         var responsedDOM = response;
-        var body = responsedDOM.root.children[1].children[1];
+        var body = util.getBodyDOM(responsedDOM);
 
         chrome.debugger.sendCommand(debuggee, "DOM.querySelector",{"nodeId" : body.nodeId, "selector" : nodeSelector}, function(response){
             util.log("GET SELECTED ELEMENT : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.querySelector, {'nodeId' : " + body.nodeId + ", 'selector' : " + nodeSelector +"}]");
@@ -96,7 +97,7 @@ tool.onRemoveAttribute = function(param){
         util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
         var responsedDOM = response;
-        var body = responsedDOM.root.children[1].children[1];
+        var body = util.getBodyDOM(responsedDOM);
 
         chrome.debugger.sendCommand(debuggee, "DOM.querySelector", {
             "nodeId": body.nodeId,
@@ -125,7 +126,7 @@ tool.onRemoveElement = function(nodeSelector){
         util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
         var responsedDOM = response;
-        var body = responsedDOM.root.children[1].children[1];
+        var body = util.getBodyDOM(responsedDOM);
 
         chrome.debugger.sendCommand(debuggee, "DOM.querySelector", {
             "nodeId": body.nodeId,
@@ -167,7 +168,7 @@ tool.onInsertHTMLElement = function(param){
 
         var responsedDOM = response;
         console.log(responsedDOM);
-        var body = responsedDOM.root.children[1].children[1];
+        var body = util.getBodyDOM(responsedDOM);
 
         chrome.debugger.sendCommand(debuggee, "DOM.querySelector", {
             "nodeId": body.nodeId,
@@ -205,7 +206,7 @@ tool.onModifyElement = function(param){
         util.log("GET DOM : Func[chrome.debugger.sendCommand],  Parameter[debuggee," + " DOM.getDocument]");
 
         var responsedDOM = response;
-        var body = responsedDOM.root.children[1].children[1];
+        var body = util.getBodyDOM(responsedDOM);
 
         chrome.debugger.sendCommand(debuggee, "DOM.querySelector", {
             "nodeId": body.nodeId,
