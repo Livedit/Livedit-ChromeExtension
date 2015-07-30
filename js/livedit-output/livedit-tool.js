@@ -40,7 +40,7 @@ tool.init();
 
 tool.onInspectDOM = function(nodeSelector){
 
-    chrome.tabs.query({active : true}, function(tab) {
+    chrome.tabs.query({lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         tool.highlight = {
@@ -86,7 +86,7 @@ tool.onRemoveAttribute = function(param){
     var attributeName = param.name,
         nodeSelector = param.selector;
 
-    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
+    chrome.tabs.query({lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -117,7 +117,7 @@ tool.onRemoveAttribute = function(param){
 };
 
 tool.onRemoveElement = function(nodeSelector){
-    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
+    chrome.tabs.query({lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -148,7 +148,7 @@ tool.onRemoveElement = function(nodeSelector){
 };
 
 tool.onInsertHTMLElementRe = function(){
-    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
+    chrome.tabs.query({lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -166,7 +166,7 @@ tool.onInsertHTMLElement = function(param){
     var nodeSelector = param.selector,
         outerHTML = param.outerHTML;
 
-    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
+    chrome.tabs.query({lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -207,7 +207,7 @@ tool.onModifyElement = function(param){
         value = param.value,
         type = param.type;
 
-    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
+    chrome.tabs.query({lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
@@ -248,7 +248,7 @@ tool.onInjectExternalJavascript = function(){
         linkFlag = true,
         firstFlag = false;*/
 
-    chrome.tabs.query({active : true, lastFocusedWindow : true}, function(tab) {
+    chrome.tabs.query({lastFocusedWindow : true}, function(tab) {
         var tab = tab[0];
 
         var debuggee = {tabId: tab.id};
