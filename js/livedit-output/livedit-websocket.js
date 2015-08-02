@@ -64,6 +64,8 @@ new function() {
             tool.onInsertHTMLElement({selector : nodeSelector, outerHTML : code});
         else if(command == "injectJavascript")
             tool.onInjectExternalJavascript();
+        else if(command == "close")
+            tool.onDetach();
 
     };
 

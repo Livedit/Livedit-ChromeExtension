@@ -342,7 +342,13 @@ tool.onInjectExternalJavascript = function(){
     });
 };
 
-tool.onAttach = function(debuggee){
+tool.onDetach = function(){
+    chrome.tabs.query({lastFocusedWindow : true}, function(tab) {
+        chrome.debugger.detach({tabId : tabId}, "Debugger");
+    });
+}
+
+tool.onAttach = function(){
     if (chrome.runtime.lastError) {
         util.error(chrome.runtime.lastError.message);
         return;
